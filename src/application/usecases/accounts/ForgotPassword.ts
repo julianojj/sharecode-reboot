@@ -1,10 +1,13 @@
 import { Token } from '../../../domain/entities/Token'
+import { Email } from '../../../domain/entities/valueobjects/Email'
 import { TokenRepository } from '../../../domain/repositories/TokenRepository'
 import { UserRepository } from '../../../domain/repositories/UserRepository'
 import { Queue } from '../../../infra/adapters/Queue'
 import { Sign } from '../../../infra/adapters/Sign'
 
 export class ForgotPassword {
+    email: Email
+    
     constructor(
         readonly userRepository: UserRepository,
         readonly tokenRepository: TokenRepository,
@@ -13,7 +16,8 @@ export class ForgotPassword {
     ) { }
 
     async execute(email: string): Promise<void> {
-        const existingUser = await this.userRepository.findByEmail(email)
+        this.email = new Email(email)
+        const existingUser = await this.userRepository.findByEmail(this.email.getValue())
         if (!existingUser) return
         const expiresIn = new Date()
         expiresIn.setMinutes(expiresIn.getMinutes() + 15)
