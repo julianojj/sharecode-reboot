@@ -12,6 +12,17 @@ const mockedQueue: Queue = {
     publish: jest.fn()
 }
 
+test('Not should forgot password if invalid email', async () => {
+    const userRepository = new UserRepositoryMemory()
+    const tokenRepository = new TokenRepositoryMemory()
+    const sign = new Jwt()
+    const forgotPassword = new ForgotPassword(userRepository, tokenRepository, sign, mockedQueue)
+    const spy = jest.spyOn(mockedQueue, 'publish')
+    await expect(() => forgotPassword.execute('julianotest.com'))
+        .rejects.toThrowError('invalid email')
+    expect(spy).not.toHaveBeenCalled()
+})
+
 test('Not should forgot password if user not found', async () => {
     const userRepository = new UserRepositoryMemory()
     const tokenRepository = new TokenRepositoryMemory()
