@@ -11,4 +11,8 @@ export class TokenRepositoryMemory implements TokenRepository {
     async findAll(): Promise<Token[]> {
         return this.tokens
     }
+
+    async findByToken(encodedToken: string): Promise<Token> {
+        return this.tokens.find(token => token.token === encodedToken)
+    }
 }

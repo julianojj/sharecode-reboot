@@ -7,4 +7,8 @@ export class Jwt implements Sign {
             expiresIn
         })
     }
+
+    decode(encodedToken: string): any {
+        return jsonwebtoken.verify(encodedToken, process.env.JWT_KEY)
+    }
 }
